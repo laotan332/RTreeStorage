@@ -41,7 +41,6 @@ struct RtreeCell {
 * @Dismensions 维度数
 * @MaxNodeCellNum 单节点最大包含的单元数
 **/
-
 template<class Storage, int Dismensions, int MaxNodeCellNum>
 class Rtree {
  public: 
@@ -56,7 +55,9 @@ class Rtree {
   bool Save();
  private:
   void NodeInsertCell(RtreeCell &cell, 
-                      RtreeNodeType *pnode); 
+                      RtreeNodeType *p_node); 
+  void NodeRemoveCell(RtreeNodeType *p_node,
+                      uint64_t cell_number);
   /**
    * 根据传输进来的 cell 信息，找到合适的叶子结点
    **/
@@ -66,7 +67,7 @@ class Rtree {
    * 获得一个节点
    * 这个操作会增加节点的引用计数
    **/
-  void NodeAcquire();
+  void NodeAcquire(RtreeNodeType* p_node);
 
   /**
    * 释放一个节点
@@ -74,6 +75,20 @@ class Rtree {
    * 如果发现某个节点已经脏了的话，会将这个节点回写到持久化存储中
    **/
   void NodeRelease();
+
+  RtreeNodeType* NodeHashLookup(uint64_t i_node);
+   
+  void NodeHashInsert(RtreeNodeType *p_node);
+
+  void NodeHashRemove(RtreeNodeType *p_node);
+
+  int FindLeafNode(uint64_t node_number, 
+                   RtreeNodeType **pp_leaf);
+
+  int AdjustTree(RtreeNodeType *p_node,
+                 RtreeCell& cell);
+
+  int SplitNode();
 
  private:
   Storage *db;                   /* 存储引擎 */
