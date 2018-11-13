@@ -1,5 +1,7 @@
 #pragma once
 
+#include "skiplist.h"
+
 namespace ssq {
 /**
 * @NodeSize 单节点存储的数据长度
@@ -36,12 +38,14 @@ struct RtreeCell {
   RtreeCoord a_coord[MaxDismensions * 2]; 
 };
 
+
 /**
 * @Storage 具体的存储引擎，存储持久化的数据
 * @Dismensions 维度数
 * @MaxNodeCellNum 单节点最大包含的单元数
 **/
-template<class Storage, int Dismensions, int MaxNodeCellNum>
+template<class Storage, int Dismensions, 
+         int MaxNodeCellNum, int HASHSIZE>
 class Rtree {
  public: 
   typedef RtreeNode<Dismensions * 2 + 2> RtreeNodeType;
@@ -53,6 +57,14 @@ class Rtree {
   int Search();
   int Count(); 
   bool Save();
+
+  struct NodeComparator {
+    int operator()(const RtreeNodeType& a, const RtreeNodeType& b) const {
+
+
+    }
+  };
+
  private:
   void NodeInsertCell(RtreeCell &cell, 
                       RtreeNodeType *p_node); 
@@ -91,9 +103,9 @@ class Rtree {
   int SplitNode();
 
  private:
-  Storage *db;                   /* 存储引擎 */
+  Storage *db_;                   /* 存储引擎 */
   int n_dim_;                    /* 维度信息 */ 
-  RtreeNodeType *hash_map[];     /* 存放所有的在内存中的节点，加速查找 */
+  SkipList<RtreeNodeType, NodeComparator> hash_[HASHSIZE];     /* 存放所有的在内存中的节点，加速查找 */
 };
 
 } // namespace ssq
