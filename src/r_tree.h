@@ -73,13 +73,12 @@ class Rtree {
   /**
    * 根据传输进来的 cell 信息，找到合适的叶子结点
    **/
-  int ChooseLeaf(RtreeCell &cell, 
-                 RtreeNodeType *pLeaf); 
-  /**
-   * 获得一个节点
-   * 这个操作会增加节点的引用计数
+  int ChooseLeaf(RtreeNodeType *root,
+                 RtreeCell &cell, 
+                 RtreeNodeType **p_leaf); 
+  /** * 获得一个节点 * 这个操作会增加节点的引用计数
    **/
-  void NodeAcquire(RtreeNodeType* p_node);
+  void NodeAcquire(RtreeNodeType **p_node);
 
   /**
    * 释放一个节点
